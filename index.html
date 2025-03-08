@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- 引入 Prism.js -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+	<!-- 引入MDUI -->
+	<link rel="stylesheet" href="https://unpkg.com/mdui@2/mdui.css">
+	<script src="https://unpkg.com/mdui@2/mdui.global.js"></script>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<title>Website</title>
+	<style>
+	</style>
+</head>
+<body>
+	<h1 align="center">欢迎来到网站！</h1>
+	<h2 align="center">文件列表</h2>
+	<div align="center" class="file-list">
+	<!--<mdui-button variant="text" full-width end-icon="arrow_forward" href="/dist/index.global.js">/dist/index.global.js</mdui-button>-->
+	<mdui-circular-progress></mdui-circular-progress>
+	</div>
+	<br>
+	<mdui-divider></mdui-divider>
+	<br>
+	<h2 align="center">网页获取测试</h2>
+	<div align="center" class="get-url">
+	<mdui-select value="GET" label="选择方法" class="mode-select">
+  	<mdui-menu-item value="GET">GET</mdui-menu-item>
+  	<mdui-menu-item value="POST">POST</mdui-menu-item>
+	</mdui-select>
+	<mdui-text-field label="地址" type="url" value="https://www.baidu.com/" class="url-input">
+	<mdui-button-icon slot="end-icon" icon="arrow_forward" onclick="request()"></mdui-button-icon>
+	</mdui-text-field>
+	<mdui-text-field label="请求结果" readonly rows="10" class="result"></mdui-text-field>
+	</div>
+	<br>
+	<mdui-divider></mdui-divider>
+	<br>
+	<h2 align="center">更多链接</h2>
+	<mdui-button variant="text" full-width end-icon="arrow_forward" href="/new_home_page">新主页</mdui-button>
+	<script>
+	const div=mdui.$(".file-list")[0];
+	function request(){
+		const url=mdui.$(".url-input")[0].value;
+		const mode=mdui.$(".mode-select")[0].value;
+		console.log(url,mode)
+		fetch(url, {
+			method: mode
+	    })
+	    .then(response => response.text())
+		.then(text => mdui.$(".result")[0].value=text)
+		.catch(error => mdui.$(".result")[0].value=error);
+	}
+	function load_file(list){
+		//div.innerHTML="";
+		var html="";
+		for(var i=0;i<list.length;i++){
+			html+='<mdui-button variant="text" full-width end-icon="arrow_forward" href="';
+			html+=list[i];
+			html+='">';
+			html+=list[i];
+			html+='</mdui-button>';
+		}
+		div.innerHTML=html;
+	}
+	function load_error(){
+		div.innerHTML='<h3 align="center" style="color:red;">:( 出错了</h3>'
+	}
+	fetch('/get/file_list', {
+		method: 'POST'
+    })
+	.then(response => response.json())
+	.then(data => load_file(data))
+	.catch(error => load_error());
+	</script>
+</body>
+</html>
